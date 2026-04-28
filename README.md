@@ -320,10 +320,8 @@ sudo apt-get install libpango1.0-dev
 
 ---
 
-## 作者与许可
+## 许可
 
-- **作者**：桑达蕤
-- **GitHub**：https://github.com/LSangdarui
 - **License**：MIT
 
 ---
