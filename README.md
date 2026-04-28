@@ -1,332 +1,338 @@
-# OpenClaw Skills
+# Wish Offers — 通用面试调研 Skill
 
-本仓库包含 OpenClaw 平台的自定义 Skills。
+> 输入任何「公司 + 岗位」，自动生成完整的面试准备包。
+> 不限行业，不限公司，不限岗位类型。
 
-## 📋 Skills 列表
+---
 
-### job_interview_research_minimax
+## 这个 Skill 能做什么
 
-为 Minimax（稀宇极智科技）大模型技术销售工程师岗位提供完整面试调研框架。
+把面试前的"信息搜集 + 自我定位 + 话术准备"全流程自动化。
 
-**功能特点：**
-- 支持简化版和深度版两种模式
-- 支持 Markdown 和 PDF 两种输出格式
-- 针对技术转销售背景定制
-- 包含6个完整STAR案例和定制话术
+### 简化版（30 分钟出报告）
 
-**文件结构：**
+适合：投了简历但还没收到面试通知，想快速了解一下 / 海投阶段批量预热
+
+输出：
+- 公司概况（融资、营收、战略）
+- 核心产品与差异化
+- 市场与竞品分析
+- 岗位职责与薪酬
+- 高频问题回答 + 反向提问
+- 行业术语速查表
+
+### 深度版（2-3 小时全面准备）
+
+适合：拿到了重要面试，需要逐个问题准备 / 转行 / 跳槽到目标公司
+
+输出（基于你的真实背景）：
+- 三大核心优势提炼
+- 岗位匹配度逐项打分
+- 6 个完整 STAR 案例（基于你的项目）
+- 8-10 个核心问题的定制话术
+- 30 秒 + 1 分钟两版电梯演讲
+- 16 个反向提问清单
+- 面试前 3 天准备清单
+
+---
+
+## 快速开始
+
+### 安装
+
+```bash
+# 克隆到你的 skills 目录
+git clone https://github.com/LSangdarui/wish-offers.git ~/.agents/skills/wish-offers
+
+# 或者下载 ZIP 后手动放到 skills 目录
 ```
-job_interview_research_minimax/
-├── SKILL.md                 # 核心定义文件（含 metadata 配置）
+
+> OpenClaw / Cursor 等 Agent 平台的 skills 目录路径可能略有不同，常见的是：
+> - `~/.agents/skills/`
+> - `~/.openclaw/skills/`
+> - `~/.cursor/skills/`
+
+### 使用
+
+#### 交互方式：问答收集，确认后执行
+
+Skill 被触发后，会用**问答方式**逐步收集信息，不会默认直接开始分析。
+
+整个流程分 6 步提问，每次只问一个问题，等你回答后才继续：
+
+```
+第 1 问：你要准备哪家公司的面试？
+↓（你回答：字节跳动 或 https://xxx）
+
+第 2 问：你应聘的岗位是？
+↓（你回答：后端工程师）
+
+第 3 问：JD 能给我看一下吗？
+↓（你粘贴 JD 文字 或 发 JD 链接）
+
+第 4 问：简化版还是深度版？
+  - 简化版：30 分钟出报告，适合快速预热
+  - 深度版：完整准备包，需要你的背景信息
+↓（你回答：简化版 / 深度版）
+
+第 5 问：
+  简化版 → 有没有想附上的背景（可选）
+  深度版 → 简历 PDF 路径 或 文字背景（建议提供）
+↓（你回答）
+
+第 6 问：Markdown 还是 PDF 输出？
+↓（你回答）
+
+→ Skill 复述一遍你的信息，你确认 → 开始调研
+```
+
+#### 支持的输入形式
+
+| 问题 | 支持的形式 |
+|------|-----------|
+| 公司 | 公司名 **或** 公司官网/招聘页 URL |
+| 岗位 | 文字 |
+| JD | JD 全文 **或** JD 链接 |
+| 背景 | 文字 / PDF 简历路径 / Markdown 文件路径 |
+| 项目 | 文字 **或** GitHub / Demo URL |
+
+#### 如果你想一次性提供所有信息
+
+Skill 会识别你已经提供的部分，只补问缺失的字段（但**输出格式必须单独确认**，不会默认）。
+
+示例：
+```
+帮我准备面试
+
+公司：Minimax
+岗位：大模型技术销售
+JD：https://www.minimaxi.com/careers/xxx
+简历：~/Documents/简历.pdf
+```
+
+Skill 会说："好，公司、岗位、JD 和简历都有了——你要简化版还是深度版？"
+
+---
+
+## 文件结构
+
+```
+wish-offers/
+├── SKILL.md                          # Skill 元数据 + 调用入口
+├── README.md                         # 本文件
 └── prompts/
-    ├── simplified_research.md   # 简化版调研模板
-    ├── deep_research.md         # 深度版调研模板
-    ├── terminology.md           # 术语表
-    └── interview_scripts.md     # 话术模板
+    ├── simplified_research.md        # 简化版调研框架
+    ├── deep_research.md              # 深度版调研框架
+    ├── interview_scripts.md          # 通用面试话术与反向提问
+    └── terminology.md                # 行业术语库（10 个行业）
 ```
 
 ---
 
-## 🚀 安装方法
+## 输入参数
 
-### 方法一：直接复制到 OpenClaw skills 目录（推荐）
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|-----|------|
+| `company` | string \| URL | ✅ | 公司名 或 公司官网/招聘页链接 |
+| `position` | string | ✅ | 岗位简称（如：技术销售） |
+| `jd_content` | string \| URL | ✅ | JD 文字 或 JD 链接 |
+| `version_type` | string | ❌ | `simplified`（默认）/ `deep` |
+| `user_background` | string \| PDF \| MD | ❌（深度版强烈建议） | 文字描述 / PDF 简历 / Markdown 简历 |
+| `key_projects` | string \| URL[] | ❌ | 文字描述 或 GitHub/Demo 链接列表 |
+| `output_format` | string | ❌ | `markdown`（默认）/ `pdf` |
 
-#### 步骤 1：找到 OpenClaw skills 目录
+### 三种必填输入的支持形式
 
-OpenClaw 的 skills 目录通常位于：
+| 字段 | 支持形式 | Skill 处理方式 |
+|------|---------|---------------|
+| 公司 | 公司名 | 直接 WebSearch |
+| 公司 | 公司 URL | WebFetch 抓取 + 补充 WebSearch |
+| 岗位 | 文字 | 直接使用 |
+| JD | JD 文字 | 直接结构化提取 |
+| JD | JD URL | WebFetch 抓取后再提取 |
 
-| 平台 | 默认路径 |
-|------|----------|
-| **macOS** | `~/.openclaw/skills/` |
-| **Linux** | `~/.openclaw/skills/` |
-| **Windows** | `%USERPROFILE%\.openclaw\skills\` |
+### 选填的多种格式
 
-如果没有该目录，手动创建：
-```bash
-mkdir -p ~/.openclaw/skills
+| 字段 | 文字 | PDF | Markdown | URL | Word |
+|------|:---:|:---:|:--------:|:---:|:----:|
+| user_background | ✅ | ✅ | ✅ | ❌ | ⚠️ 需先转换 |
+| key_projects | ✅ | ❌ | ✅ | ✅ | ❌ |
+
+### 深度版的 background 内容建议（无论用哪种形式都建议覆盖）
+
+```yaml
+建议涵盖的核心信息:
+  - years_of_experience: "5 年"
+  - current_role: "运维工程师"
+  - industries_worked: ["游戏", "电商"]
+  - key_projects: 至少 2 个有量化数据的项目
+  - core_skills: ["K8s", "Python", "阿里云"]
+  - transition_motivation: "想转技术销售"
+
+加分项（有则提供）:
+  - customer_resources: "游戏行业 40+ 联系人"
+  - unique_advantage: "经手 1.5 亿+ 采购"
+  - ai_experience: "GPT/Claude 应用经验"
 ```
 
-#### 步骤 2：克隆本仓库
-
-```bash
-# 进入 OpenClaw skills 目录
-cd ~/.openclaw/skills
-
-# 克隆本仓库
-git clone https://github.com/LSangdarui/wish-offers.git job_interview_research_minimax
-
-# 或者使用 SSH（如果你已配置 SSH key）
-git clone git@github.com:LSangdarui/wish-offers.git job_interview_research_minimax
-```
-
-#### 步骤 3：验证安装
-
-安装完成后，目录结构应该是：
-```
-~/.openclaw/skills/
-└── job_interview_research_minimax/
-    ├── SKILL.md
-    ├── README.md
-    └── prompts/
-        ├── simplified_research.md
-        ├── deep_research.md
-        ├── terminology.md
-        └── interview_scripts.md
-```
-
-#### 步骤 4：重启 OpenClaw
-
-安装完成后，重启 OpenClaw 客户端，Skill 会自动加载。
+> 如果你提供的是 PDF 简历，以上信息会从简历自动提取，不必再额外重复。
 
 ---
 
-### 方法二：手动下载安装
+## 支持的行业（已配置术语库）
 
-如果不方便使用 git，可以手动下载安装：
+- AI / 大模型
+- 云计算 / IaaS
+- SaaS / B 端软件
+- 互联网消费 / C 端
+- 电商 / 跨境
+- 金融 / 支付 / Fintech
+- 游戏 / 娱乐
+- 硬件 / 半导体
+- 自动驾驶 / 出行
+- 销售 / 商业通用（任何 ToB 销售岗）
 
-#### 步骤 1：下载文件
-
-1. 访问 https://github.com/LSangdarui/wish-offers
-2. 点击 "Code" → "Download ZIP"
-3. 解压 ZIP 文件
-
-#### 步骤 2：复制到 skills 目录
-
-```bash
-# 创建 skills 目录（如果不存在）
-mkdir -p ~/.openclaw/skills
-
-# 复制解压后的文件夹
-mv ~/Downloads/wish-offers-main ~/.openclaw/skills/job_interview_research_minimax
-```
+如果你的目标公司不在这些行业里，Skill 会用通用框架处理，并在调研中自动学习该行业的术语。
 
 ---
 
-### 方法三：在 Cursor 中使用（作为 Cursor Skill）
+## 数据来源与可靠性
 
-本 Skill 也兼容 Cursor 的 Skill 系统。
+### 推荐来源（按可靠性排序）
 
-#### 安装步骤：
+| 来源 | 可靠性 | 适合调研的内容 |
+|------|--------|---------------|
+| 官网 / 招股书 / 财报 | ★★★★★ | 财务、战略、产品 |
+| 官方技术博客 | ★★★★★ | 技术细节、产品更新 |
+| 36氪 / 虎嗅 / 财新 / Bloomberg | ★★★★☆ | 行业分析、商业动态 |
+| LinkedIn / 脉脉 | ★★★☆☆ | 团队规模、内部文化 |
+| 看准网 / Glassdoor | ★★★☆☆ | 薪资、面试体验 |
+| 知乎 / 小红书 | ★★☆☆☆ | 主观评价、补充视角 |
 
-```bash
-# 进入 Cursor skills 目录
-cd ~/.cursor/skills
+### 信息缺失时的处理
 
-# 克隆本仓库
-git clone https://github.com/LSangdarui/wish-offers.git job-interview-research-minimax
-
-# 或者创建软链接（如果你已经在 OpenClaw 中安装）
-ln -s ~/.openclaw/skills/job_interview_research_minimax ~/.cursor/skills/job-interview-research-minimax
-```
-
----
-
-## 📖 使用方法
-
-### 基本用法
-
-安装完成后，在 OpenClaw 中输入以下指令即可使用：
+Skill 会主动标注：
 
 ```
-帮我准备 Minimax 大模型技术销售工程师的面试调研
-```
+⚠️ 数据获取限制
+[具体信息] 无法从公开渠道获取，原因：[xxx]
 
-OpenClaw 会自动识别并加载本 Skill，然后询问你需要哪个版本和格式。
-
-### 指定版本和格式
-
-#### 简化版 + Markdown（默认）
-```
-version: simplified
-format: markdown
-```
-
-#### 深度版 + PDF
-```
-version: deep
-format: pdf
-background:
-  years: 5
-  role: 运维工程师
-  industries: [游戏, 电商]
-```
-
-### 完整示例
-
-```
-我需要深度版的 Minimax 面试调研报告，输出为 PDF。
-
-我的背景：
-- 工作年限：5年
-- 当前岗位：SRE运维工程师
-- 公司背景：电商公司
-- 项目经验：千万级上云项目、年度降本800万
-- 技能特长：K8s、Python、阿里云
-- 转型方向：技术销售
+替代方案：
+- 使用 [备用来源]
+- 基于行业均值估算（已标注）
+- 建议在面试中直接询问
 ```
 
 ---
 
-## ⚙️ 配置说明
+## 输出示例
 
-### 输入参数（Input Params）
+### 简化版报告目录
 
-| 参数名 | 类型 | 必填 | 默认值 | 说明 |
-|--------|------|------|--------|------|
-| `version_type` | string | 是 | - | 调研版本：`simplified`（简化版）或 `deep`（深度版） |
-| `output_format` | string | 否 | `markdown` | 输出格式：`markdown` 或 `pdf` |
-| `user_background` | string | 否 | - | 用户背景信息（用于深度版定制） |
+```
+# {公司} 面试调研报告（简化版）
+├── 一、公司概况
+│   ├── 1.1 基本信息
+│   ├── 1.2 融资历程
+│   ├── 1.3 财务健康度
+│   └── 1.4 战略方向
+├── 二、核心业务与产品
+├── 三、市场与竞品分析
+├── 四、岗位深度分析
+├── 五、面试准备清单
+└── 六、行业术语速查表
+```
 
-### 版本对比
+### 深度版报告目录
 
-| 版本 | 适用场景 | 内容量 | 时长 |
-|------|----------|--------|------|
-| **简化版** | 快速了解公司 | ~5,000字 | 30分钟 |
-| **深度版** | 深度面试准备 | ~20,000字 | 2-3小时 |
-
-### 输出格式对比
-
-| 格式 | 适用场景 | 特点 |
-|------|----------|------|
-| **Markdown** | 电脑编辑、后续修改 | 可编辑、易管理 |
-| **PDF** | 打印、手机查看、分享 | 排版美观、便携 |
-
----
-
-## 📊 数据来源与可靠性
-
-### 可靠数据来源 ★★★★★
-- Minimax 招股书（港交所公开信息）
-- 2025年度财报（官方披露）
-- MiniMax News 技术博客（官方）
-- 阿里云/火山引擎客户案例（合作伙伴）
-- 36氪、虎嗅等权威科技媒体报道
-
-### 数据时效性
-- 财务数据：2025年度（2026年3月发布）
-- 产品信息：截至2026年4月
-- 市场数据：2024-2025年行业报告
-
-### 数据缺失处理
-当某些信息无法从公开渠道获取时，Skill 会：
-1. ⚠️ 明确标注"信息来源受限，以下为行业推测"
-2. 📊 提供基于行业平均水平的合理估算范围
-3. 💡 建议在面试中直接询问验证
+```
+# {公司} 面试调研报告（深度版）
+├── 一、个人定位分析
+│   ├── 三大核心优势
+│   ├── 岗位匹配度评估
+│   └── 短板弥补策略
+├── 二、6 个 STAR 案例
+├── 三、定制回答话术（8-10 问）
+├── 四、电梯演讲模板（30 秒 + 1 分钟）
+├── 五、反向提问清单（16 个）
+├── 六、面试前 3 天准备计划
+└── 附件：术语表 / 公司分析 / 竞品对比
+```
 
 ---
 
-## 🔄 更新方法
-
-当本仓库有更新时，可以通过以下方式更新：
-
-### 方法一：Git 拉取更新（推荐）
+## 更新
 
 ```bash
-cd ~/.openclaw/skills/job_interview_research_minimax
+cd ~/.agents/skills/wish-offers
 git pull origin main
 ```
 
-### 方法二：重新克隆
-
-```bash
-# 删除旧版本
-rm -rf ~/.openclaw/skills/job_interview_research_minimax
-
-# 重新克隆
-cd ~/.openclaw/skills
-git clone https://github.com/LSangdarui/wish-offers.git job_interview_research_minimax
-```
-
 ---
 
-## 🐛 故障排除
+## 故障排除
 
-### 问题 1：Skill 无法加载
+### Skill 无法加载
 
-**症状**：输入指令后没有识别到 Skill
+1. 检查目录路径是否正确（如 `~/.agents/skills/wish-offers/SKILL.md` 必须存在）
+2. 检查 `SKILL.md` 顶部的 metadata（`name`、`description` 是否完整）
+3. 重启你的 Agent 客户端
 
-**解决方案**：
-1. 检查目录结构是否正确
-2. 确保 SKILL.md 文件存在且格式正确
-3. 重启 OpenClaw 客户端
-4. 检查 OpenClaw 日志（通常在 `~/.openclaw/logs/`）
+### PDF 转换失败
 
-### 问题 2：GitHub 连接失败
-
-**症状**：无法克隆仓库
-
-**解决方案**：
 ```bash
-# 检查 SSH key
-ls -la ~/.ssh/id_*
-
-# 如果没有 SSH key，生成一个
-ssh-keygen -t ed25519 -C "your_email@example.com"
-
-# 将公钥添加到 GitHub
-cat ~/.ssh/id_ed25519.pub
-# 复制输出内容到 GitHub Settings -> SSH and GPG keys -> New SSH key
-
-# 测试连接
-ssh -T git@github.com
-```
-
-### 问题 3：缺少依赖工具
-
-**症状**：PDF 转换失败
-
-**解决方案**：
-```bash
-# 安装 Python 依赖
+# Python 依赖
 pip install markdown weasyprint
 
 # macOS 额外依赖
 brew install pango gdk-pixbuf libffi
 
-# Ubuntu/Debian 额外依赖
+# Ubuntu/Debian
 sudo apt-get install libpango1.0-dev
 ```
 
+或者使用替代方案：
+- VS Code 插件 `Markdown PDF`
+- 在线工具：https://www.markdowntopdf.com/
+
+### 公司搜索不到
+
+可能原因：
+- 创业初期的小公司
+- 公司名拼写需要确认
+- 信息保密度较高（如军工类）
+
+建议补充：
+- 公司官网链接
+- 内部员工 / 猎头提供的一手信息
+- 让 Skill 用行业标准给出通用框架
+
 ---
 
-## 📝 更新日志
+## 更新日志
 
 | 版本 | 日期 | 更新内容 |
-|------|------|----------|
-| v2.0 | 2026-04-27 | 合并简化版和深度版，适配 OpenClaw 格式规范，添加 metadata 配置 |
-| v1.0 | 2026-04-27 | 初始版本，分为两个独立 Skill |
+|------|------|---------|
+| v3.1 | 2026-04-27 | **必填项支持链接形式**（公司 URL、JD URL）；**新增 JD 必填字段**；**选填项支持 PDF 简历**（自动 Read 解析）；**项目支持 GitHub/Demo 链接**；新增「输入解析」阶段，所有输入源走统一处理流程 |
+| v3.0 | 2026-04-27 | 改造为通用版，支持任何公司、任何岗位；新增 10 个行业术语库；优化深度版 STAR 模板和定制话术 |
+| v2.0 | 2026-04-27 | 合并简化版与深度版，适配 OpenClaw 元数据规范 |
+| v1.0 | 2026-04-27 | 初始版本（仅 Minimax 特化） |
 
 ---
 
-## 👤 作者信息
+## 作者与许可
 
 - **作者**：桑达蕤
-- **邮箱**：18374722586@163.com
 - **GitHub**：https://github.com/LSangdarui
+- **License**：MIT
 
 ---
 
-## 📄 License
+## 相关链接
 
-MIT License
-
----
-
-## 🤝 贡献指南
-
-如果你对本 Skill 有改进建议或发现了问题，欢迎：
-1. 提交 Issue：https://github.com/LSangdarui/wish-offers/issues
-2. 提交 Pull Request
-3. 联系作者
-
----
-
-## 🔗 相关链接
-
-- **本仓库**：https://github.com/LSangdarui/wish-offers
-- **Minimax 官网**：https://www.minimaxi.com
-- **Minimax 开放平台**：https://api.minimaxi.com
-- **OpenClaw 文档**：[待添加]
+- 仓库：https://github.com/LSangdarui/wish-offers
+- 反馈：https://github.com/LSangdarui/wish-offers/issues
+- 配套 Skill：[tob-sales-assistant](https://github.com/LSangdarui/tob-sales-assistant)（ToB 销售助手）
 
 ---
 
